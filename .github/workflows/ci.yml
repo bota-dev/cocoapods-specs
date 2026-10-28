@@ -1,0 +1,46 @@
+name: Specs CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+concurrency:
+  group: specs-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Specs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Select the qualified npm version
+        run: npm install --global npm@11.17.0 --ignore-scripts --no-audit --no-fund
+      - name: Install the frozen dependency-free workspace
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate source and metadata
+        run: |
+          npm run lint
+          npm run check
+          npm test
+      - name: Refuse changes to existing versions
+        env:
+          SPEC_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+        run: node scripts/validate-specs.mjs --base "$SPEC_BASE_SHA"

@@ -1,0 +1,10 @@
+node_modules/
+target/
+.DS_Store
+.env
+.env.*
+*.key
+*.pem
+*_ed25519
+*.zip
+*.xcframework/

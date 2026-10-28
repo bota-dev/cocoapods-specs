@@ -1,0 +1,16 @@
+{
+  "name": "@bota.dev/cocoapods-specs-index",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Bota-owned CocoaPods metadata index; SDK payloads remain immutable release assets",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "npm@11.17.0",
+  "engines": { "node": ">=22.23.2" },
+  "scripts": {
+    "check": "node scripts/validate-specs.mjs",
+    "lint": "node --check scripts/validate-specs.mjs && node --check scripts/validate-specs.test.mjs && node --check scripts/check-licenses.mjs",
+    "test": "node --test scripts/validate-specs.test.mjs",
+    "license-check": "node scripts/check-licenses.mjs"
+  }
+}
