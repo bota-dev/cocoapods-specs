@@ -40,16 +40,20 @@ published or installable SDK version.
 The protected App SDK release publisher adds only metadata matching its approved
 release archive. An existing version must match in full, otherwise publication
 fails. New metadata first goes to a unique `publish/<run-id>-<attempt>` branch.
-The publisher waits for **Validate Specs**, **License Gate** and **Scan** on that
-exact commit, then fast-forwards `main` to the same SHA without a PR or bypass.
+The publisher opens a pull request for that exact candidate. **Validate Specs**,
+**License Gate** and **Scan** must pass on its exact head, and organization rules
+require an independent approval of the latest push before an authorized
+maintainer merges it. The publisher waits for that merge, then verifies the
+actual public specification on `main`. It never approves or merges its own pull
+request, updates `main` directly, or bypasses the review policy.
 Do not amend, delete or rename an occupied version, force-push history,
 reuse a version, or redirect it to a different payload. A timeout is not proof
 that publication failed; inspect the existing entry before retrying.
 
 The App SDK publisher receives `BOTA_COCOAPODS_SPECS_TOKEN` only in its protected
 `release` environment. Use an approved fine-grained token restricted to
-`bota-dev/cocoapods-specs`, with Contents write access and only the read permissions
-required to observe its checks. An approved GitHub App integration may instead
+`bota-dev/cocoapods-specs`, with Contents write and Pull requests write access.
+Public check observations are anonymous. An approved GitHub App integration may instead
 supply a short-lived installation token for this repository at execution time.
 The publisher uses HTTPS with a per-command credential helper; it must not
 persist a user's general GitHub credential or add an SSH-key fallback.
@@ -59,6 +63,10 @@ and manage its expiration, rotation and revocation. A workflow secret reference
 does not prove that a usable credential has been configured. Anonymous read
 access to this public index requires no token. Never commit credentials or SDK
 archives here.
+
+The writer secret is not configured, so automatic publication of new versions is
+not activated. Existing indexed versions and consumer qualification are separate
+from activating this publishing route.
 
 ## Validation
 
@@ -89,9 +97,10 @@ are required.
 
 Repository owners must verify the integration-branch rules require **Validate
 Specs**, **License Gate** and **Scan**, and protect against force pushes and branch
-deletion. Workflow files do not prove that enforcement is configured. The App SDK
-publisher must respect these rules; do not configure a review bypass merely to
-make publication succeed.
+deletion. The rules also require a pull request, at least one independent
+approval and approval of the latest push. Workflow files do not prove that
+enforcement is configured. The App SDK publisher must respect these rules; do not
+configure a review bypass merely to make publication succeed.
 
 These checks establish metadata shape and append-only changes. The App SDK release
 gates separately verify archive bytes, source identities and clean Apple/Flutter
