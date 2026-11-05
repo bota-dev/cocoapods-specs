@@ -87,10 +87,10 @@ versions. Without a distinct remote `main`, manual/initial checks use the first
 parent or the initial empty tree. Full Git history and a clean committed index
 are required.
 
-Title/body-only PR edits skip runner allocation under a noncanonical check name
-and a separate concurrency group; they cannot replace or cancel the required
-source `Scan`. Base retargets and unknown edit payloads still scan. GitHub may
-display the unevaluated name expression for a skipped job.
+Every PR event, including title/body-only edits, runs the real required `Scan`.
+Title/body-only edits use a separate concurrency group so they cannot cancel
+an active source scan. Base retargets and unknown edit payloads retain the
+source concurrency group.
 
 Repository owners must verify the integration-branch rules require **Validate
 Specs**, **License Gate** and **Scan**, and protect against force pushes and branch
