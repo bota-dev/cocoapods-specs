@@ -87,6 +87,11 @@ versions. Without a distinct remote `main`, manual/initial checks use the first
 parent or the initial empty tree. Full Git history and a clean committed index
 are required.
 
+Title/body-only PR edits skip runner allocation under a noncanonical check name
+and a separate concurrency group; they cannot replace or cancel the required
+source `Scan`. Base retargets and unknown edit payloads still scan. GitHub may
+display the unevaluated name expression for a skipped job.
+
 Repository owners must verify the integration-branch rules require **Validate
 Specs**, **License Gate** and **Scan**, and protect against force pushes and branch
 deletion. Workflow files do not prove that enforcement is configured. The App SDK
