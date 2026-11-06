@@ -87,6 +87,11 @@ versions. Without a distinct remote `main`, manual/initial checks use the first
 parent or the initial empty tree. Full Git history and a clean committed index
 are required.
 
+Every PR event, including title/body-only edits, runs the real required `Scan`.
+Title/body-only edits use a separate concurrency group so they cannot cancel
+an active source scan. Base retargets and unknown edit payloads retain the
+source concurrency group.
+
 Repository owners must verify the integration-branch rules require **Validate
 Specs**, **License Gate** and **Scan**, and protect against force pushes and branch
 deletion. Workflow files do not prove that enforcement is configured. The App SDK
